@@ -9,21 +9,30 @@ namespace Tanki
 {
     public abstract class Actor
     {
-        public List<IDrawable> DrawPool { get; set; }
+        public ActorType Type { get; set; }
+        public List<Actor> DrawPool { get; set; }
         public Texture2D Texture { get; set; }
         public SpriteBatch SpriteBatch { get; set; }
+        public bool ToRemove { get; set; }
 
         public Rectangle CurrentPosition;
         public Color CurrentColor; //TODO: Obsolote after texture implementaiton
 
-        public bool IsOutOfBounds()
+        public Actor()
         {
-            if (CurrentPosition.X < 0 || CurrentPosition.Y < 0)
-                return true;
-            //TODO: replace hardcoded values
-            if (CurrentPosition.X > 100 || CurrentPosition.Y > 300)
-                return true;
-            return false;
+            Type = ActorType.Unset;
+            ToRemove = false;
+        }
+
+        public virtual List<Actor> Collisions()
+        {
+            List<Actor> results = new List<Actor>();
+            foreach (Actor actor in DrawPool)
+            {
+                if (actor.CurrentPosition.Intersects(CurrentPosition) && actor.Type == ActorType.EnemyTank)
+                    results.Add(actor);
+            }
+            return results;
         }
 
         public virtual void Draw()
@@ -33,5 +42,30 @@ namespace Tanki
                 this.SpriteBatch.Draw(Texture, CurrentPosition, CurrentColor);
             }
         }
+
+        public virtual void GotHit(Projectile projectile)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool OutOfBounds
+        {
+            get
+            {
+                if (this.CurrentPosition.X > 700 || this.CurrentPosition.X < 20)
+                    return true;
+                if (this.CurrentPosition.Y > 400 || this.CurrentPosition.Y < 20)
+                    return true;
+                return false;
+            }
+        }
+    }
+
+    public enum ActorType
+    {
+        Unset = -1,
+        Player,
+        EnemyTank,
+        Projectile
     }
 }

@@ -7,30 +7,33 @@ using System.Text;
 
 namespace Tanki
 {
-    public class Tank : Actor, IDrawable, IMovable, IShootable
+    public class Tank : Actor, IMovable, IShootable
     {
         public int LastShot { get; set; }
-        public Direction TurretFacing;
-        private int ReloadTime = 250;
+        public Direction TurretFacing { get; set; }
+        public int ReloadTime { get; set; }
 
         public Tank()
         {
+            Type = ActorType.EnemyTank;
             CurrentColor = Color.White;
             CurrentPosition = new Rectangle(100, 130, 30, 30);
             TurretFacing = Direction.Right;
             LastShot = 0;
+            ReloadTime = 250;
         }
 
-        public override void Draw()
+        public Tank(List<Actor> DrawPool) : this()
         {
-            if (null != this.SpriteBatch)
-            {
-                this.SpriteBatch.Draw(Texture, CurrentPosition, CurrentColor);
-            }
+            this.DrawPool = DrawPool;
         }
 
         public bool Move(Direction direction, int speed)
         {
+            var collisons = this.Collisions();
+            if (collisons.Any())
+                return false;
+            
             switch (direction)
             {
                 case Direction.Left:
@@ -58,7 +61,7 @@ namespace Tanki
         {
             if (ReadyToShoot(gameTime))
             {
-                Projectile projectile = new Projectile(this, this.SpriteBatch, this.Texture);
+                Projectile projectile = new Projectile(this);
                 DrawPool.Add(projectile);
                 LastShot = (int)gameTime.TotalGameTime.TotalMilliseconds;
             }
@@ -69,6 +72,44 @@ namespace Tanki
             if (gameTime.TotalGameTime.TotalMilliseconds > this.LastShot + ReloadTime)
                 return true;
             return false;
+        }
+
+        public override List<Actor> Collisions()
+        {
+            List<Actor> results = new List<Actor>();
+            foreach (Actor actor in DrawPool)
+            {
+                var reference = CurrentPosition;
+                reference.Width += 2;
+                reference.Height += 2;
+                if (actor.CurrentPosition.Intersects(reference) && actor.Type == ActorType.EnemyTank)
+                    results.Add(actor);
+            }
+            return results;
+        }
+
+        public override void GotHit(Projectile projectile)
+        {
+            if (CurrentColor == Color.White)
+            {
+                CurrentColor = Color.Lime;
+                return;
+            }
+            if (CurrentColor == Color.Lime)
+            {
+                CurrentColor = Color.Orange;
+                return;
+            }
+            if (CurrentColor == Color.Orange)
+            {
+                CurrentColor = Color.Red;
+                return;
+            }
+            if (CurrentColor == Color.Red)
+            {
+                ToRemove = true;
+                return;
+            }
         }
     }
 }

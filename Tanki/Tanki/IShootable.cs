@@ -9,8 +9,7 @@ namespace Tanki
     interface IShootable
     {
         int LastShot { get; set; }
-
-        List<IDrawable> DrawPool { get; set; }
+        int ReloadTime { get; set; }
 
         void Shoot(GameTime gameTime);
         bool ReadyToShoot(GameTime gameTime);

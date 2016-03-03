@@ -15,7 +15,7 @@ namespace Tanki
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Tank player;
-        List<IDrawable> DrawPool;
+        List<Actor> DrawPool;
 
         public TankiGame()
         {
@@ -31,10 +31,10 @@ namespace Tanki
         /// </summary>
         protected override void Initialize()
         {
-            DrawPool = new List<IDrawable>();
+            DrawPool = new List<Actor>();
             // Create player's tank
-            player = new Tank();
-            player.DrawPool = DrawPool;
+            player = new Tank(DrawPool);
+            player.Type = ActorType.Player;
             DrawPool.Add(player);
 
             // Create enemy
@@ -94,6 +94,15 @@ namespace Tanki
             if (Keyboard.GetState().IsKeyDown(Keys.Space))
                 player.Shoot(gameTime);
 
+            if (Keyboard.GetState().IsKeyDown(Keys.N))
+            {
+                var rnd = new Random();
+                Tank enemy = new Tank();
+                enemy.CurrentPosition = new Rectangle(rnd.Next(0, 700), rnd.Next(0, 400), 65, 65);
+                enemy.Texture = player.Texture;
+                DrawPool.Add(enemy);
+            }
+
             base.Update(gameTime);
         }
 
@@ -111,8 +120,13 @@ namespace Tanki
 
             spriteBatch.Begin();
 
-            foreach(IDrawable actor in DrawPool) 
+            // Remove marked actors
+            DrawPool.RemoveAll(a => a.ToRemove);
+            DrawPool.RemoveAll(a => a.Type == ActorType.Projectile && a.OutOfBounds);
+            foreach (Actor actor in DrawPool)
+            {
                 actor.Draw();
+            }
 
             spriteBatch.End();
         }

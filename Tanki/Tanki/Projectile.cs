@@ -7,18 +7,19 @@ using System.Text;
 
 namespace Tanki
 {
-    class Projectile : Actor, IDrawable, IMovable
+    public class Projectile : Actor, IMovable
     {
         public int Speed { get; set; }
         public Direction ShotDirection { get; set; } 
 
         public Projectile()
         {
+            Type = ActorType.Projectile;
             CurrentColor = Color.Red;
             Speed = 4;
         }
 
-        public Projectile(Tank tank, SpriteBatch spriteBatch, Texture2D texture2D) : this()
+        public Projectile(Tank tank) : this()
         {
             this.ShotDirection = tank.TurretFacing;
             this.CurrentPosition = tank.CurrentPosition;
@@ -26,8 +27,9 @@ namespace Tanki
             this.CurrentPosition.Y += 13;
             this.CurrentPosition.Width = 4;
             this.CurrentPosition.Height = 4;
-            this.SpriteBatch = spriteBatch;
-            this.Texture = texture2D;
+            this.SpriteBatch = tank.SpriteBatch;
+            this.Texture = tank.Texture;
+            this.DrawPool = tank.DrawPool;
         }
 
         public override void Draw()
@@ -41,8 +43,14 @@ namespace Tanki
 
         public bool Move(Direction direction, int speed)
         {
-            if (Impact())
+            var collisons = this.Collisions();
+            if (collisons.Any())
+            {
+                collisons.First().GotHit(this);
+                this.ToRemove = true;
                 return false;
+            }
+                
             switch (ShotDirection)
             {
                 case Direction.Left:
@@ -61,12 +69,6 @@ namespace Tanki
                     break;
             }
             return true;
-        }
-
-        private bool Impact()
-        {
-            // TODO: to implement impact check logic, we need collection of each actors with their positions
-            return false;
         }
     }
 }
