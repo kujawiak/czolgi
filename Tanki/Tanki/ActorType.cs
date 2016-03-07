@@ -5,12 +5,11 @@ using System.Text;
 
 namespace Tanki
 {
-    public enum Direction
+    public enum ActorType
     {
-        Left,
-        Right,
-        Up,
-        Down,
-        unknown
+        Unset = -1,
+        Player,
+        EnemyTank,
+        Projectile
     }
 }

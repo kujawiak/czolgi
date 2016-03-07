@@ -15,6 +15,7 @@ namespace Tanki
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Tank player;
+        Controls Ks = new Controls();
         List<Actor> DrawPool;
 
         public TankiGame()
@@ -77,24 +78,33 @@ namespace Tanki
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
-                Exit();
+            if (Ks.CheckIfCanClose()) Exit();
             
             int speed = 2;
-            //TODO: Export to separate class (Controls?) that will handle inputs logic to avoid if-flooding here
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
-                player.Move(Direction.Right, speed);
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
-                player.Move(Direction.Left, speed);
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
-                player.Move(Direction.Up, speed);
-            if (Keyboard.GetState().IsKeyDown(Keys.Down))
-                player.Move(Direction.Down, speed);
+            KeyboardState ks = Keyboard.GetState();
+            switch(Ks.MoveControler())
+            {
+                case 0:
+                    player.Move(Direction.Left, speed);
+                    if (Ks.ShootPressed()) player.Shoot(gameTime);
+                    return;
+                case 1:
+                    player.Move(Direction.Right, speed);
+                    if (Ks.ShootPressed()) player.Shoot(gameTime);
+                    return;
+                case 2:
+                    player.Move(Direction.Up, speed);
+                    if (Ks.ShootPressed()) player.Shoot(gameTime);
+                    return;
+                case 3:
+                    player.Move(Direction.Down, speed);
+                    if (Ks.ShootPressed()) player.Shoot(gameTime);
+                    return;
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Space))
-                player.Shoot(gameTime);
+            }
+            if (Ks.ShootPressed()) player.Shoot(gameTime);
 
-            if (Keyboard.GetState().IsKeyDown(Keys.N))
+            if (Ks.GenerateEnemiesPressed())
             {
                 var rnd = new Random();
                 Tank enemy = new Tank();

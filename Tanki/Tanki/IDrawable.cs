@@ -5,12 +5,7 @@ using System.Text;
 
 namespace Tanki
 {
-    public enum Direction
+    class IDrawable
     {
-        Left,
-        Right,
-        Up,
-        Down,
-        unknown
     }
 }
