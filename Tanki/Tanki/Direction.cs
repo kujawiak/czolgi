@@ -10,6 +10,7 @@ namespace Tanki
         Left,
         Right,
         Up,
-        Down
+        Down,
+        unknown
     }
 }
