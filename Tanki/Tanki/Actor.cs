@@ -60,12 +60,4 @@ namespace Tanki
             }
         }
     }
-
-    public enum ActorType
-    {
-        Unset = -1,
-        Player,
-        EnemyTank,
-        Projectile
-    }
 }
