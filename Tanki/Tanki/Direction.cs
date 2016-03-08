@@ -11,5 +11,6 @@ namespace Tanki
         Right,
         Up,
         Down,
+        unknown// don't remove please I need this
     }
 }

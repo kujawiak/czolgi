@@ -42,6 +42,7 @@
     <Compile Include="ActorType.cs" />
     <Compile Include="Controls.cs" />
     <Compile Include="Direction.cs" />
+    <Compile Include="IDrawable.cs" />
     <Compile Include="IMovable.cs" />
     <Compile Include="IShootable.cs" />
     <Compile Include="Projectile.cs" />

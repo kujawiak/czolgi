@@ -9,40 +9,75 @@ namespace Tanki
 {
     class Controls
     {
-        public KeyboardState ks = Keyboard.GetState();
+        public KeyboardState oldState;
+        public KeyboardState newState;
+        public Direction direction { get; set; }
+        public Controls()
+        {
+            oldState = Keyboard.GetState();
+        }
 
-        public bool CheckIfCanClose()
+        //class properties
+        public bool CheckIfCanClose
         {
-            return GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape);
+            get { return GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape); }
         }
-        public int MoveControler()
+        public bool ShootPressed  
         {
-            
-            if (Keyboard.GetState().IsKeyDown(Keys.Right))
-            {
-                return 1;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.Left))
-            {
-                return 0;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.Up))
-            {
-                return 2;
-            }
-            if (Keyboard.GetState().IsKeyDown(Keys.Down))
-            {
-                return 3;
-            }
-            return -1;
+            get { return Keyboard.GetState().IsKeyDown(Keys.Space); }
         }
-        public bool ShootPressed()
+        private bool generateEnemiesPressed;
+        public bool GenerateEnemiesPressed
         {
-            return Keyboard.GetState().IsKeyDown(Keys.Space);
+            get{ return generateEnemiesPressed; }
+            set{ generateEnemiesPressed = value; }
         }
-        public bool GenerateEnemiesPressed()
+        public static string GetEnumMemberValue<T>(T enumItem) where T : struct
         {
-            return Keyboard.GetState().IsKeyDown(Keys.N);
+            return  enumItem.ToString();
+        }
+       
+        public Direction MoveControler()
+        {
+            if (Keyboard.GetState().IsKeyDown(Keys.Right) && // I think is ugly way to block other directions but I didn't find better at the moment...
+                Keyboard.GetState().IsKeyUp(Keys.Up) &&
+                Keyboard.GetState().IsKeyUp(Keys.Down) &&
+                Keyboard.GetState().IsKeyUp(Keys.Left))
+            {
+                return  Direction.Right;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Left) &&
+                Keyboard.GetState().IsKeyUp(Keys.Up) &&
+                Keyboard.GetState().IsKeyUp(Keys.Down) &&
+                Keyboard.GetState().IsKeyUp(Keys.Right))
+            {
+                return Direction.Left;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Up) &&
+                Keyboard.GetState().IsKeyUp(Keys.Left) &&
+                Keyboard.GetState().IsKeyUp(Keys.Down) &&
+                Keyboard.GetState().IsKeyUp(Keys.Right))
+            {
+                return Direction.Up;
+            }
+            if (Keyboard.GetState().IsKeyDown(Keys.Down) &&
+                Keyboard.GetState().IsKeyUp(Keys.Left) &&
+                Keyboard.GetState().IsKeyUp(Keys.Up) &&
+                Keyboard.GetState().IsKeyUp(Keys.Right))
+            {
+                return Direction.Down;
+            }
+            return Direction.unknown;
+        }
+        public bool OneKeyPress(Keys key) // we need this to catch only one key stroke
+        {
+            oldState = newState;
+            newState = Keyboard.GetState();
+            if (newState.IsKeyDown(key) && oldState.IsKeyUp(key))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
