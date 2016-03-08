@@ -15,8 +15,9 @@ namespace Tanki
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Tank player;
-        Controls Ks = new Controls();
+        Controls controls = new Controls();
         List<Actor> DrawPool;
+        public Direction direction { get; set; }
 
         public TankiGame()
         {
@@ -78,33 +79,30 @@ namespace Tanki
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
-            if (Ks.CheckIfCanClose()) Exit();
-            
+            if (controls.CheckIfCanClose) Exit();
             int speed = 2;
-            KeyboardState ks = Keyboard.GetState();
-            switch(Ks.MoveControler())
+            direction = controls.MoveControler();
+            Console.WriteLine(direction);
+            if (controls.ShootPressed) player.Shoot(gameTime);
+            switch(direction)
             {
-                case 0:
+                case Direction.Left:
                     player.Move(Direction.Left, speed);
-                    if (Ks.ShootPressed()) player.Shoot(gameTime);
                     return;
-                case 1:
+                case Direction.Right:
                     player.Move(Direction.Right, speed);
-                    if (Ks.ShootPressed()) player.Shoot(gameTime);
                     return;
-                case 2:
+                case Direction.Up:
                     player.Move(Direction.Up, speed);
-                    if (Ks.ShootPressed()) player.Shoot(gameTime);
                     return;
-                case 3:
+                case Direction.Down:
                     player.Move(Direction.Down, speed);
-                    if (Ks.ShootPressed()) player.Shoot(gameTime);
                     return;
+                    
 
             }
-            if (Ks.ShootPressed()) player.Shoot(gameTime);
 
-            if (Ks.GenerateEnemiesPressed())
+            if (controls.GenerateEnemiesPressed = controls.OneKeyPress(Keys.N))
             {
                 var rnd = new Random();
                 Tank enemy = new Tank();

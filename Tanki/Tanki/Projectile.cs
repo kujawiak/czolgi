@@ -23,8 +23,8 @@ namespace Tanki
         {
             this.ShotDirection = tank.TurretFacing;
             this.CurrentPosition = tank.CurrentPosition;
-            this.CurrentPosition.X += 1; //TODO: repalce hardcoded values
-            this.CurrentPosition.Y += 1;
+            this.CurrentPosition.X += 13; //TODO: repalce hardcoded values
+            this.CurrentPosition.Y += 13;
             this.CurrentPosition.Width = 4;
             this.CurrentPosition.Height = 4;
             this.SpriteBatch = tank.SpriteBatch;

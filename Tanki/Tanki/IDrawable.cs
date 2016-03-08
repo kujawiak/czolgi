@@ -5,7 +5,8 @@ using System.Text;
 
 namespace Tanki
 {
-    class IDrawable
+    interface IDrawable
     {
+        void Draw(); //TODO
     }
 }
