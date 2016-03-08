@@ -29,7 +29,7 @@ namespace Tanki
             this.CurrentPosition.Height = 4;
             this.SpriteBatch = tank.SpriteBatch;
             this.Texture = tank.Texture;
-            this.DrawPool = tank.DrawPool;
+            this.UnitManager = tank.UnitManager;
         }
 
         public override void Draw()
@@ -47,7 +47,7 @@ namespace Tanki
             if (collisons.Any())
             {
                 collisons.First().GotHit(this);
-                this.ToRemove = true;
+                this.RemoveMe = true;
                 return false;
             }
                 

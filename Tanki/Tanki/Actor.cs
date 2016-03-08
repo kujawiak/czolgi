@@ -10,10 +10,10 @@ namespace Tanki
     public abstract class Actor
     {
         public ActorType Type { get; set; }
-        public List<Actor> DrawPool { get; set; }
+        public UnitManager UnitManager { get; set; }
         public Texture2D Texture { get; set; }
         public SpriteBatch SpriteBatch { get; set; }
-        public bool ToRemove { get; set; }
+        public bool RemoveMe { get; set; }
 
         public Rectangle CurrentPosition;
         public Color CurrentColor; //TODO: Obsolote after texture implementaiton
@@ -21,13 +21,13 @@ namespace Tanki
         public Actor()
         {
             Type = ActorType.Unset;
-            ToRemove = false;
+            RemoveMe = false;
         }
 
         public virtual List<Actor> Collisions()
         {
             List<Actor> results = new List<Actor>();
-            foreach (Actor actor in DrawPool)
+            foreach (Actor actor in UnitManager.Units)
             {
                 if (actor.CurrentPosition.Intersects(CurrentPosition) && actor.Type == ActorType.EnemyTank)
                     results.Add(actor);

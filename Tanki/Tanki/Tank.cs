@@ -23,9 +23,10 @@ namespace Tanki
             ReloadTime = 250;
         }
 
-        public Tank(List<Actor> DrawPool) : this()
+        public Tank(UnitManager UnitManager)
+            : this()
         {
-            this.DrawPool = DrawPool;
+            this.UnitManager = UnitManager;
         }
 
         public bool Move(Direction direction, int speed)
@@ -62,7 +63,7 @@ namespace Tanki
             if (ReadyToShoot(gameTime))
             {
                 Projectile projectile = new Projectile(this);
-                DrawPool.Add(projectile);
+                UnitManager.Add(projectile);
                 LastShot = (int)gameTime.TotalGameTime.TotalMilliseconds;
             }
         }
@@ -77,7 +78,7 @@ namespace Tanki
         public override List<Actor> Collisions()
         {
             List<Actor> results = new List<Actor>();
-            foreach (Actor actor in DrawPool)
+            foreach (Actor actor in UnitManager.Units)
             {
                 var reference = CurrentPosition;
                 reference.Width += 2;
@@ -107,7 +108,7 @@ namespace Tanki
             }
             if (CurrentColor == Color.Red)
             {
-                ToRemove = true;
+                RemoveMe = true;
                 return;
             }
         }

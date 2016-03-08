@@ -42,9 +42,9 @@
     <Compile Include="ActorType.cs" />
     <Compile Include="Controls.cs" />
     <Compile Include="Direction.cs" />
-    <Compile Include="IDrawable.cs" />
-    <Compile Include="IMovable.cs" />
-    <Compile Include="IShootable.cs" />
+    <Compile Include="Interfaces\IMovable.cs" />
+    <Compile Include="Interfaces\IShootable.cs" />
+    <Compile Include="UnitManager.cs" />
     <Compile Include="Projectile.cs" />
     <Compile Include="Tank.cs" />
     <Compile Include="TankiGame.cs" />

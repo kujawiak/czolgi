@@ -16,7 +16,7 @@ namespace Tanki
         SpriteBatch spriteBatch;
         Tank player;
         Controls controls = new Controls();
-        List<Actor> DrawPool;
+        UnitManager UnitManager;
         public Direction direction { get; set; }
 
         public TankiGame()
@@ -33,16 +33,16 @@ namespace Tanki
         /// </summary>
         protected override void Initialize()
         {
-            DrawPool = new List<Actor>();
+            UnitManager = new UnitManager();
             // Create player's tank
-            player = new Tank(DrawPool);
+            player = new Tank(UnitManager);
             player.Type = ActorType.Player;
-            DrawPool.Add(player);
+            UnitManager.Add(player);
 
             // Create enemy
             Tank enemy = new Tank();
             enemy.CurrentPosition = new Rectangle(200, 100, 50, 80);
-            DrawPool.Add(enemy);
+            UnitManager.Add(enemy);
             
             base.Initialize();
         }
@@ -60,7 +60,7 @@ namespace Tanki
             Texture2D defaultTexture = new Texture2D(GraphicsDevice, 1, 1);
             defaultTexture.SetData(new[] { Color.LightGray });
 
-            DrawPool.Where(a => a.Texture == null).Select(a => a.Texture = defaultTexture).ToList();
+            UnitManager.SetTexture(defaultTexture);
         }
 
         /// <summary>
@@ -108,7 +108,7 @@ namespace Tanki
                 Tank enemy = new Tank();
                 enemy.CurrentPosition = new Rectangle(rnd.Next(0, 700), rnd.Next(0, 400), 65, 65);
                 enemy.Texture = player.Texture;
-                DrawPool.Add(enemy);
+                UnitManager.Add(enemy);
             }
 
             base.Update(gameTime);
@@ -124,18 +124,16 @@ namespace Tanki
 
             base.Draw(gameTime);
 
-            DrawPool.Where(a => a.SpriteBatch == null).Select(a => a.SpriteBatch = spriteBatch).ToList();
+            UnitManager.SetSpriteBatch(spriteBatch);
+
+            // Remove marked actors before redrawing
+            UnitManager.CleanUp();
 
             spriteBatch.Begin();
-
-            // Remove marked actors
-            DrawPool.RemoveAll(a => a.ToRemove);
-            DrawPool.RemoveAll(a => a.Type == ActorType.Projectile && a.OutOfBounds);
-            foreach (Actor actor in DrawPool)
+            foreach (Actor actor in UnitManager.Units)
             {
                 actor.Draw();
             }
-
             spriteBatch.End();
         }
     }    
