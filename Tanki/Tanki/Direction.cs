@@ -11,6 +11,5 @@ namespace Tanki
         Right,
         Up,
         Down,
-        unknown
     }
 }
